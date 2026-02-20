@@ -1,44 +1,19 @@
 import pandas as pd
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, recall_score
 import joblib
 
+from .transformers import MaxHRImputer, SexBinaryEncoder
+
 CFG = {
     "target_col":  "heart_disease",
-    "data_path": './heart_small.csv',
+    "data_path": './ml_pipeline/data/heart_small.csv',
+    "model_path": "./app/model/rf_pipeline.joblib",
     "rnd_seed": 19
 }
-
-# -----------------------------
-# Custom transformer
-# -----------------------------
-class MaxHRImputer(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X = X.copy()
-        mask = X["max_hr"].isna()
-        X.loc[mask, "max_hr"] = 220 - X.loc[mask, "age"]
-        return X
-
-
-# -----------------------------
-# Binary encoder for sex
-# -----------------------------
-class SexBinaryEncoder(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X = X.copy()
-        X["sex"] = X["sex"].map({"male": 1, "female": 0})
-        return X
-
 
 # -----------------------------
 # Load data
@@ -88,5 +63,9 @@ print(f"Recal score: {score_recall:.4f}")
 # -----------------------------
 # Save pipeline
 # -----------------------------
-joblib.dump(pipeline, "rf_pipeline.joblib")
-print("Pipeline saved as rf_pipeline.joblib")
+joblib.dump(pipeline, CFG['model_path'])
+print(f"Pipeline saved at: {CFG['model_path']}")
+
+
+if __name__ == "__main__":
+    pass
