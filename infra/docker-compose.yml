@@ -1,0 +1,10 @@
+services:
+  tf:
+    image: hashicorp/terraform:1.13.3
+    working_dir: /tf-code
+    volumes:
+      - ./deploy:/tf-code
+      - ~/.aws:/root/.aws:ro
+    environment:
+      TF_VAR_aws_region: ${TF_VAR_aws_region}
+      TF_VAR_project_name: ${TF_VAR_project_name}
